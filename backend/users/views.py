@@ -1,13 +1,9 @@
-import datetime
-
 from backend.generic.swagger import STRING_RESPONSE
 from backend.generic.views import BaseViewSet
 from backend.users import models as users_models
 from backend.users import serializers as users_serializers
-from django.db import transaction
-from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import filters, mixins, serializers, status, viewsets
+from rest_framework import mixins, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     # project apps
     "backend.users",
+    "backend.products",
     "backend.web_requests",
 ]
 
