@@ -38,8 +38,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_yasg",
     # project apps
-    "backend.users",
+    "backend.branches",
     "backend.products",
+    "backend.users",
     "backend.web_requests",
 ]
 

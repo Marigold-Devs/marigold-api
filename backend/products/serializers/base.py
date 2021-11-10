@@ -5,7 +5,7 @@ from backend.products import models as products_models
 class ProductSerializer(generic_base.DynamicFieldsModelSerializer):
     class Meta:
         model = products_models.Product
-        fields = ["id", "name", "unit_cost", "vat_type"]
+        fields = "__all__"
 
 
 class ProductPriceSerializer(generic_base.DynamicFieldsModelSerializer):

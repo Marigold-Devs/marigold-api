@@ -1,3 +1,4 @@
+from backend.branches import models as branches_models
 from backend.generic.views import BaseViewSet
 from backend.products import models as products_models
 from backend.products import serializers as products_serializers
@@ -10,6 +11,8 @@ class ProductViewSet(
     BaseViewSet,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
 ):
     queryset = products_models.Product.objects.all()
     serializer_class = products_serializers.response.ProductResponseSerializer
@@ -17,10 +20,6 @@ class ProductViewSet(
     filter_backends = [filters.SearchFilter]
     search_fields = ["name"]
 
-    @swagger_auto_schema(
-        request_body=None,
-        responses={200: products_serializers.response.ProductResponseSerializer()},
-    )
     def list(self, request, *args, **kwargs):
         """List Products
 
@@ -54,20 +53,36 @@ class ProductViewSet(
         product_prices_data = []
         for product_price in serializer.validated_data["product_prices"]:
             product_prices_data.append(
-                products_models.ProductPrice(product_id=product.id, **product_price)
+                products_models.ProductPrice(product=product, **product_price)
             )
         product_prices = products_models.ProductPrice.objects.bulk_create(
             product_prices_data
         )
 
-        data = {
-            "product_prices": product_prices,
-            **products_serializers.base.ProductSerializer(product).data,
-        }
+        # Create branch products
+        branches = branches_models.Branch.objects.all()
+        if branches.count() > 0:
+            branch_products_data = []
+            for branch in branches:
+                for product_price in products_models.ProductPrice.objects.filter(
+                    product_id=product.id
+                ):
+                    branch_products_data.append(
+                        branches_models.BranchProduct(
+                            branch=branch, product_price=product_price
+                        )
+                    )
+                branches_models.BranchProduct.objects.bulk_create(branch_products_data)
 
-        return Response(
-            products_serializers.response.ProductResponseSerializer(data).data
+        # Create response
+        response = products_serializers.response.ProductResponseSerializer(
+            {
+                "product_prices": product_prices,
+                **products_serializers.base.ProductSerializer(product).data,
+            }
         )
+
+        return Response(response.data)
 
     @swagger_auto_schema(
         request_body=products_serializers.request.ProductUpdateRequestSerializer(),
@@ -106,13 +121,21 @@ class ProductViewSet(
 
             product_price_ids.append(item.id)
 
-        data = {
-            "product_prices": products_models.ProductPrice.objects.filter(
-                id__in=product_price_ids
-            ),
-            **products_serializers.base.ProductSerializer(product).data,
-        }
-
-        return Response(
-            products_serializers.response.ProductResponseSerializer(data).data
+        # Create response
+        response = products_serializers.response.ProductResponseSerializer(
+            {
+                "product_prices": products_models.ProductPrice.objects.filter(
+                    id__in=product_price_ids
+                ),
+                **products_serializers.base.ProductSerializer(product).data,
+            }
         )
+
+        return Response(response.data)
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete Product
+
+        Deletes a product
+        """
+        return super().destroy(request, *args, **kwargs)

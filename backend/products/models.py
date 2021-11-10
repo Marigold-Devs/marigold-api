@@ -47,9 +47,8 @@ class ProductPrice(models.Model):
     price_special = models.DecimalField(
         default=None, blank=True, null=True, max_digits=10, decimal_places=2
     )
-    reorder_point = models.PositiveSmallIntegerField(
-        default=None, blank=True, null=True
-    )
+
+    reorder_point = models.DecimalField(default=0, max_digits=10, decimal_places=3)
 
     class Meta:
         db_table = "product_prices"
