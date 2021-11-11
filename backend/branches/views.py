@@ -101,11 +101,6 @@ class BranchProductsViewSet(
     queryset = products_models.Product.objects.all()
     serializer_class = branches_serializers.query.BranchProductsQuerySerializer
 
-    filter_backends = [filters.SearchFilter]
-    search_fields = [
-        "name",
-    ]
-
     @swagger_auto_schema(
         query_serializer=branches_serializers.query.BranchProductsQuerySerializer(),
         responses={

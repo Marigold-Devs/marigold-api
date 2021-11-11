@@ -1,6 +1,5 @@
-from django.db import models
 from backend.products import models as product_models
-from backend.branches import querysets as branches_querysets
+from django.db import models
 
 
 class Branch(models.Model):
@@ -29,8 +28,6 @@ class BranchProduct(models.Model):
 
     class Meta:
         db_table = "branch_products"
-
-    objects = branches_querysets.BranchProductQuerySet.as_manager()
 
     def __str__(self):
         return "%d - %s - %s" % (

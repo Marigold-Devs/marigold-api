@@ -1,0 +1,149 @@
+[
+    {
+        "model": "products.unittype",
+        "pk": 1,
+        "fields": {
+            "name": "100s"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 2,
+        "fields": {
+            "name": "5 Kilo"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 3,
+        "fields": {
+            "name": "Bag"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 4,
+        "fields": {
+            "name": "Bottle"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 5,
+        "fields": {
+            "name": "Box"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 6,
+        "fields": {
+            "name": "Bundle"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 7,
+        "fields": {
+            "name": "Can"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 8,
+        "fields": {
+            "name": "Case"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 9,
+        "fields": {
+            "name": "Container"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 10,
+        "fields": {
+            "name": "Cup"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 11,
+        "fields": {
+            "name": "Dozen"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 12,
+        "fields": {
+            "name": "Drum"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 13,
+        "fields": {
+            "name": "Gallon"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 14,
+        "fields": {
+            "name": "Kilo"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 15,
+        "fields": {
+            "name": "Pack"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 16,
+        "fields": {
+            "name": "Pail"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 17,
+        "fields": {
+            "name": "Per box"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 18,
+        "fields": {
+            "name": "Piece"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 19,
+        "fields": {
+            "name": "Ream"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 20,
+        "fields": {
+            "name": "Sack"
+        }
+    },
+    {
+        "model": "products.unittype",
+        "pk": 21,
+        "fields": {
+            "name": "Tie"
+        }
+    }
+]
