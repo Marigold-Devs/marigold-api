@@ -10,6 +10,7 @@ from rest_framework.response import Response
 class ProductViewSet(
     BaseViewSet,
     mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
@@ -26,6 +27,13 @@ class ProductViewSet(
         Gets a collection of Products.
         """
         return super().list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        """Retrieve Product
+
+        Gets a Product.
+        """
+        return super().retrieve(request, *args, **kwargs)
 
     @swagger_auto_schema(
         request_body=products_serializers.request.ProductCreateRequestSerializer(),
@@ -110,7 +118,9 @@ class ProductViewSet(
         for product_price in serializer.validated_data["product_prices"]:
             item = None
             if "id" in product_price:
-                item = products_models.ProductPrice.objects.filter(pk=27).first()
+                item = products_models.ProductPrice.objects.filter(
+                    pk=product_price["id"]
+                ).first()
                 for (key, value) in product_price.items():
                     setattr(item, key, value)
                 item.save()
@@ -139,3 +149,18 @@ class ProductViewSet(
         Deletes a product
         """
         return super().destroy(request, *args, **kwargs)
+
+
+class UnitTypeViewSet(
+    BaseViewSet,
+    mixins.ListModelMixin,
+):
+    queryset = products_models.UnitType.objects.all()
+    serializer_class = products_serializers.base.UnitTypeSerializer
+
+    def list(self, request, *args, **kwargs):
+        """List Unit Types
+
+        Gets a collection of Unit Types.
+        """
+        return super().list(request, *args, **kwargs)

@@ -3,7 +3,7 @@ from backend.branches import serializers as branches_serializers
 from backend.generic.views import BaseViewSet
 from backend.products import models as products_models
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import filters, mixins
+from rest_framework import mixins
 from rest_framework.response import Response
 
 
@@ -98,7 +98,7 @@ class BranchProductsViewSet(
     BaseViewSet,
     mixins.ListModelMixin,
 ):
-    queryset = products_models.Product.objects.all()
+    queryset = products_models.Product.objects
     serializer_class = branches_serializers.query.BranchProductsQuerySerializer
 
     @swagger_auto_schema(
@@ -118,17 +118,21 @@ class BranchProductsViewSet(
         )
         serializer.is_valid(raise_exception=True)
 
-        queryset = products_models.Product.objects.filter(
-            name__icontains=serializer.validated_data.get("search", "")
-        )
+        search = serializer.validated_data.get("search", "")
+        status = serializer.validated_data.get("status", None)
+        branch_id = serializer.validated_data.get("branch_id", None)
 
+        queryset = products_models.Product.objects.with_name(
+            search
+        ).with_product_status(branch_id=branch_id, product_status=status)
+        
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = branches_serializers.response.BranchProductsResponseSerializer(
                 page,
                 many=True,
                 context={
-                    "branch_id": serializer.validated_data.get("branch_id", None),
+                    "branch_id": branch_id,
                     **self.get_serializer_context(),
                 },
             )
@@ -136,8 +140,3 @@ class BranchProductsViewSet(
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
-        # products = self.get_queryset()
-        # return Response(products.values())
-
-        # return super().list(request, *args, **kwargs)

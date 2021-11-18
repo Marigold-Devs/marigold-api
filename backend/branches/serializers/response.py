@@ -1,17 +1,14 @@
-from backend.branches import serializers as branches_serializers
 from backend.branches import models as branches_models
 from backend.branches.globals import BRANCH_PRODUCT_STATUSES
-from backend.generic.serializers import base as generic_base
 from backend.products import models as products_models
 from backend.products import serializers as products_serializers
 from rest_framework import serializers
-from rest_framework import serializers
-from drf_yasg.utils import swagger_serializer_method
 
 
 class BranchProductsResponseSerializer(products_serializers.base.ProductSerializer):
     class ProductPriceSerializer(products_serializers.base.ProductPriceSerializer):
         balance = serializers.SerializerMethodField()
+        branch_product_id = serializers.SerializerMethodField()
 
         def get_balance(self, product_price):
             branch_id = self.context.get("branch_id")
@@ -22,11 +19,21 @@ class BranchProductsResponseSerializer(products_serializers.base.ProductSerializ
 
             return branch_product.balance if branch_product is not None else None
 
+        def get_branch_product_id(self, product_price):
+            branch_id = self.context.get("branch_id")
+
+            branch_product = branches_models.BranchProduct.objects.filter(
+                branch_id=branch_id, product_price_id=product_price.id
+            ).first()
+
+            return branch_product.id if branch_product is not None else None
+
         class Meta:
             ref_name = "BranchProductsResponseSerializer-ProductPriceSerializer"
             model = products_serializers.base.ProductPriceSerializer.Meta.model
             fields = products_serializers.base.ProductPriceSerializer.Meta.fields + [
                 "balance",
+                "branch_product_id",
             ]
 
     def get_status(self, product):
@@ -40,7 +47,6 @@ class BranchProductsResponseSerializer(products_serializers.base.ProductSerializ
         # Get branch products
         branch_products = []
         for product_price in product_prices:
-
             branch_product = branches_models.BranchProduct.objects.filter(
                 branch_id=branch_id, product_price_id=product_price.id
             ).first()

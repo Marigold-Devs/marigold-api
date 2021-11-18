@@ -1,4 +1,5 @@
 from backend.products.choices import VAT_TYPE_CHOICES
+from backend.products.querysets import ProductQuerySet
 from django.db import models
 
 
@@ -6,6 +7,8 @@ class Product(models.Model):
     name = models.CharField(max_length=50)
     unit_cost = models.DecimalField(default=None, max_digits=10, decimal_places=2)
     vat_type = models.CharField(max_length=5, choices=VAT_TYPE_CHOICES)
+
+    objects = ProductQuerySet.as_manager()
 
     class Meta:
         db_table = "products"
