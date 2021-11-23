@@ -1,7 +1,7 @@
 import calendar
 
 from django.utils import timezone
-from django.db.models import QuerySet, Q, F, Sum, OuterRef, Prefetch
+from django.db.models import QuerySet, Q, F, Sum, OuterRef, Prefetch, Count
 from django.db.models.expressions import Case, When
 from django.db.models.fields import CharField, DecimalField, IntegerField
 from django.db.models.expressions import Case, Subquery, When
@@ -30,42 +30,37 @@ class ProductQuerySet(QuerySet):
             # return the unfiltered queryset immediately
             return self
 
-        product_price_queryset = products_models.ProductPrice.objects.prefetch_related(
-            Prefetch(
-                "branch_products",
-                queryset=branches_models.BranchProduct.objects.filter(
-                    branch_id=branch_id
-                ),
-            )
-        )
-        queryset = self.prefetch_related(
-            Prefetch("product_prices", queryset=product_price_queryset)
-        )
-
         return (
-            queryset.annotate(
+            self.annotate(
                 total_branch_product_balance=Sum(
                     "product_prices__branch_products__balance"
+                )
+            )
+            .annotate(
+                reorder_count=Count(
+                    "pk",
+                    filter=Q(product_prices__branch_products__branch_id=branch_id)
+                    & ~Q(product_prices__reorder_point__exact=0)
+                    & Q(
+                        product_prices__reorder_point__gte=F(
+                            "product_prices__branch_products__balance"
+                        )
+                    ),
+                    distinct=True,
                 )
             )
             .annotate(
                 product_status=Case(
                     When(
                         ~Q(product_prices__branch_products__branch_id=branch_id),
-                        then=-1,
+                        then=0,
                     ),
                     When(
-                        Q(total_branch_product_balance__lte=0),
+                        Q(total_branch_product_balance=0),
                         then=2,
                     ),
                     When(
-                        Q(product_prices__reorder_point__gt=0)
-                        & Q(product_prices__branch_products__balance__gt=0)
-                        & Q(
-                            product_prices__reorder_point__gte=F(
-                                "product_prices__branch_products__balance"
-                            )
-                        ),
+                        Q(reorder_count__gt=0),
                         then=3,
                     ),
                     default=1,

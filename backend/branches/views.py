@@ -122,10 +122,12 @@ class BranchProductsViewSet(
         status = serializer.validated_data.get("status", None)
         branch_id = serializer.validated_data.get("branch_id", None)
 
-        queryset = products_models.Product.objects.with_name(
-            search
-        ).with_product_status(branch_id=branch_id, product_status=status)
-        
+        queryset = (
+            products_models.Product.objects.with_name(name=search)
+            .with_product_status(branch_id=branch_id, product_status=status)
+            .distinct()
+        )
+
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = branches_serializers.response.BranchProductsResponseSerializer(

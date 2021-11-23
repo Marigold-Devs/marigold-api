@@ -69,18 +69,19 @@ class ProductViewSet(
 
         # Create branch products
         branches = branches_models.Branch.objects.all()
-        if branches.count() > 0:
+        product_prices = products_models.ProductPrice.objects.filter(product=product)
+
+        if len(branches) > 0:
             branch_products_data = []
             for branch in branches:
-                for product_price in products_models.ProductPrice.objects.filter(
-                    product_id=product.id
-                ):
+                for product_price in product_prices:
                     branch_products_data.append(
                         branches_models.BranchProduct(
                             branch=branch, product_price=product_price
                         )
                     )
-                branches_models.BranchProduct.objects.bulk_create(branch_products_data)
+                    
+            branches_models.BranchProduct.objects.bulk_create(branch_products_data)   
 
         # Create response
         response = products_serializers.response.ProductResponseSerializer(

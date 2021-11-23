@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # project apps
     "backend.branches",
     "backend.products",
+    "backend.preorders",
     "backend.users",
     "backend.web_requests",
 ]

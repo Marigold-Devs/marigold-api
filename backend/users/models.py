@@ -2,9 +2,9 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.utils import timezone
 
-from .choices import USER_TYPE_CHOICES
+from .choices import USER_TYPE_CHOICES, CLIENT_TYPE_CHOICES
 from .managers import UserManager
-from .querysets import UserQuerySet
+from .querysets import UserQuerySet, ClientQuerySet
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -54,4 +54,27 @@ class User(AbstractBaseUser, PermissionsMixin):
                 " ",
                 self.last_name if self.last_name is not None else "",
             ]
+        )
+
+
+class Client(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=250)
+    address = models.CharField(max_length=50)
+    landline = models.CharField(max_length=50, blank=True, null=True)
+    phone = models.CharField(max_length=50, blank=True, null=True)
+    type = models.CharField(
+        max_length=20,
+        choices=CLIENT_TYPE_CHOICES,
+    )
+
+    objects = ClientQuerySet.as_manager()
+
+    class Meta:
+        db_table = "clients"
+
+    def __str__(self):
+        return "%d - %s" % (
+            self.id,
+            self.name,
         )

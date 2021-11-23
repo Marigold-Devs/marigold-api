@@ -13,6 +13,7 @@ from rest_framework_simplejwt.views import (
 ROUTER = SuppressedPutRouter()
 
 ROUTER.register_api("users", views.UserViewSet)
+ROUTER.register_api("clients", views.ClientViewSet)
 
 URLS = [
     re_path(

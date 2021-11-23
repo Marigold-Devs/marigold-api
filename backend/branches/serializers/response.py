@@ -75,5 +75,5 @@ class BranchProductsResponseSerializer(products_serializers.base.ProductSerializ
 
     class Meta:
         model = products_serializers.base.ProductSerializer.Meta.model
-        fields = ["name", "unit_cost", "vat_type", "product_prices", "status"]
+        fields = ["id", "name", "unit_cost", "vat_type", "product_prices", "status"]
         ref_name = "BranchProductsResponseSerializer"

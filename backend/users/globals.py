@@ -3,3 +3,8 @@ USER_TYPES = {
     "MANAGER": "manager",
     "PERSONNEL": "personnel",
 }
+
+CLIENT_TYPES = {
+    "SUPPLIER": "supplier",
+    "CUSTOMER": "customer",
+}

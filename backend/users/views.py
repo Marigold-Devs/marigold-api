@@ -71,3 +71,36 @@ class UserViewSet(
             )
 
         return Response(users_serializers.base.UserSerializer(user).data)
+
+
+class ClientViewSet(
+    BaseViewSet,
+    mixins.ListModelMixin,
+):
+    pagination_class = None
+    queryset = users_models.Client.objects
+
+    @swagger_auto_schema(
+        query_serializer=users_serializers.query.ClientQuerySerializer(),
+        responses={200: users_serializers.base.ClientSerializer()},
+    )
+    def list(self, request, *args, **kwargs):
+        """List Clients
+
+        Gets a collection of Clients.
+        """
+
+        serializer = users_serializers.query.ClientQuerySerializer(
+            data=request.query_params
+        )
+        serializer.is_valid(raise_exception=True)
+
+        # Query
+        queryset = users_models.Client.objects.with_type(
+            serializer.validated_data.get("type", None)
+        )
+
+        # Create response
+        response = users_serializers.base.ClientSerializer(queryset, many=True)
+
+        return Response(response.data)
