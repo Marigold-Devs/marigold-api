@@ -40,7 +40,7 @@ class Preorder(models.Model):
         db_table = "preorders"
 
     def __str__(self):
-        return "%d - %s" % (self.id, self.name)
+        return "%d - %s" % (self.id, self.user.name)
 
 
 class PreorderProduct(models.Model):

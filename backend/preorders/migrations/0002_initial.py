@@ -10,41 +10,65 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('users', '0001_initial'),
-        ('preorders', '0001_initial'),
+        ("users", "0001_initial"),
+        ("preorders", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('branches', '0001_initial'),
+        ("branches", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='preordertransaction',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='preorder_transactions', to=settings.AUTH_USER_MODEL),
+            model_name="preordertransaction",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="preorder_transactions",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='preorderproduct',
-            name='branch_product',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='preorder_products', to='branches.branchproduct'),
+            model_name="preorderproduct",
+            name="branch_product",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="preorder_products",
+                to="branches.branchproduct",
+            ),
         ),
         migrations.AddField(
-            model_name='preorderproduct',
-            name='preorder',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='preorder_products', to='preorders.preorder'),
+            model_name="preorderproduct",
+            name="preorder",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="preorder_products",
+                to="preorders.preorder",
+            ),
         ),
         migrations.AddField(
-            model_name='preorder',
-            name='branch',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='preorders', to='branches.branch'),
+            model_name="preorder",
+            name="branch",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="preorders",
+                to="branches.branch",
+            ),
         ),
         migrations.AddField(
-            model_name='preorder',
-            name='supplier',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='preorders', to='users.client'),
+            model_name="preorder",
+            name="supplier",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="preorders",
+                to="users.client",
+            ),
         ),
         migrations.AddField(
-            model_name='preorder',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='preorders', to=settings.AUTH_USER_MODEL),
+            model_name="preorder",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="preorders",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

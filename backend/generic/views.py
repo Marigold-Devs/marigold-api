@@ -78,8 +78,7 @@ class BaseViewSet(viewsets.GenericViewSet):
         return context
 
     def get_serializer_class(self):
-        """Get Serializer Class
-        """
+        """Get Serializer Class"""
         if self.action == "list_extended" or self.action == "retrieve_extended":
             return self.extended_serializer_class
 

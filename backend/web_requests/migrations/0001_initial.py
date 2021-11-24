@@ -7,22 +7,29 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='WebRequest',
+            name="WebRequest",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('time', models.DateTimeField(auto_now_add=True)),
-                ('host', models.CharField(max_length=1000)),
-                ('path', models.CharField(max_length=1000)),
-                ('method', models.CharField(max_length=50)),
-                ('uri', models.CharField(max_length=2000)),
-                ('status_code', models.IntegerField()),
-                ('get', models.TextField(blank=True, null=True)),
-                ('post', models.TextField(blank=True, null=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("time", models.DateTimeField(auto_now_add=True)),
+                ("host", models.CharField(max_length=1000)),
+                ("path", models.CharField(max_length=1000)),
+                ("method", models.CharField(max_length=50)),
+                ("uri", models.CharField(max_length=2000)),
+                ("status_code", models.IntegerField()),
+                ("get", models.TextField(blank=True, null=True)),
+                ("post", models.TextField(blank=True, null=True)),
             ],
         ),
     ]

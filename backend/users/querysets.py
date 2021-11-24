@@ -22,5 +22,5 @@ class ClientQuerySet(QuerySet):
     def with_type(self, type: str):
         if type is None:
             return self
-            
+
         return self.filter(type=type)

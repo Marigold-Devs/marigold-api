@@ -9,4 +9,3 @@ class ResponseThen(Response):
     def close(self):
         super().close()
         self.then_callback()
-

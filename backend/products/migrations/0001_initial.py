@@ -8,46 +8,131 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Product',
+            name="Product",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50)),
-                ('unit_cost', models.DecimalField(decimal_places=2, default=None, max_digits=10)),
-                ('vat_type', models.CharField(choices=[('vat', 'VAT'), ('vat-e', 'VAT-Exempted')], max_length=5)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=50)),
+                (
+                    "unit_cost",
+                    models.DecimalField(decimal_places=2, default=None, max_digits=10),
+                ),
+                (
+                    "vat_type",
+                    models.CharField(
+                        choices=[("vat", "VAT"), ("vat-e", "VAT-Exempted")],
+                        max_length=5,
+                    ),
+                ),
             ],
             options={
-                'db_table': 'products',
+                "db_table": "products",
             },
         ),
         migrations.CreateModel(
-            name='UnitType',
+            name="UnitType",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=50)),
             ],
             options={
-                'db_table': 'unit_types',
+                "db_table": "unit_types",
             },
         ),
         migrations.CreateModel(
-            name='ProductPrice',
+            name="ProductPrice",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('price_market', models.DecimalField(blank=True, decimal_places=2, default=None, max_digits=10, null=True)),
-                ('price_delivery', models.DecimalField(blank=True, decimal_places=2, default=None, max_digits=10, null=True)),
-                ('price_pickup', models.DecimalField(blank=True, decimal_places=2, default=None, max_digits=10, null=True)),
-                ('price_special', models.DecimalField(blank=True, decimal_places=2, default=None, max_digits=10, null=True)),
-                ('reorder_point', models.DecimalField(decimal_places=3, default=0, max_digits=10)),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='product_prices', to='products.product')),
-                ('unit_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='product_prices', to='products.unittype')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "price_market",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        default=None,
+                        max_digits=10,
+                        null=True,
+                    ),
+                ),
+                (
+                    "price_delivery",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        default=None,
+                        max_digits=10,
+                        null=True,
+                    ),
+                ),
+                (
+                    "price_pickup",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        default=None,
+                        max_digits=10,
+                        null=True,
+                    ),
+                ),
+                (
+                    "price_special",
+                    models.DecimalField(
+                        blank=True,
+                        decimal_places=2,
+                        default=None,
+                        max_digits=10,
+                        null=True,
+                    ),
+                ),
+                (
+                    "reorder_point",
+                    models.DecimalField(decimal_places=3, default=0, max_digits=10),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="product_prices",
+                        to="products.product",
+                    ),
+                ),
+                (
+                    "unit_type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="product_prices",
+                        to="products.unittype",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'product_prices',
+                "db_table": "product_prices",
             },
         ),
     ]

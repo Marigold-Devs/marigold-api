@@ -52,7 +52,11 @@ def job():
             response = session.post(
                 url,
                 data=json.dumps(
-                    {"username": USERNAME, "password": PASSWORD,}, cls=DecimalEncoder,
+                    {
+                        "username": USERNAME,
+                        "password": PASSWORD,
+                    },
+                    cls=DecimalEncoder,
                 ),
                 headers=headers,
                 timeout=5,

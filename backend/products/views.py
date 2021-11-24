@@ -80,8 +80,8 @@ class ProductViewSet(
                             branch=branch, product_price=product_price
                         )
                     )
-                    
-            branches_models.BranchProduct.objects.bulk_create(branch_products_data)   
+
+            branches_models.BranchProduct.objects.bulk_create(branch_products_data)
 
         # Create response
         response = products_serializers.response.ProductResponseSerializer(

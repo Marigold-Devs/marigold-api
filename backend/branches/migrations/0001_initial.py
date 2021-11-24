@@ -9,30 +9,63 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('products', '0001_initial'),
+        ("products", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Branch',
+            name="Branch",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=50)),
             ],
             options={
-                'db_table': 'branches',
+                "db_table": "branches",
             },
         ),
         migrations.CreateModel(
-            name='BranchProduct',
+            name="BranchProduct",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('balance', models.DecimalField(decimal_places=3, default=0, max_digits=10)),
-                ('branch', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='branch_products', to='branches.branch')),
-                ('product_price', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='branch_products', to='products.productprice')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "balance",
+                    models.DecimalField(decimal_places=3, default=0, max_digits=10),
+                ),
+                (
+                    "branch",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="branch_products",
+                        to="branches.branch",
+                    ),
+                ),
+                (
+                    "product_price",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="branch_products",
+                        to="products.productprice",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'branch_products',
+                "db_table": "branch_products",
             },
         ),
     ]
