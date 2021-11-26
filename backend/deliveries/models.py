@@ -66,6 +66,8 @@ class DeliveryProduct(models.Model):
         related_name="delivery_products",
     )
 
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
     quantity = models.DecimalField(default=0, max_digits=10, decimal_places=3)
 
     class Meta:

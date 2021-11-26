@@ -94,7 +94,7 @@ class BranchViewSet(
         return super().destroy(request, *args, **kwargs)
 
 
-class BranchProductsViewSet(
+class BranchProductViewSet(
     BaseViewSet,
     mixins.ListModelMixin,
 ):

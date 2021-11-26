@@ -11,6 +11,7 @@ from backend.deliveries.urls import ROUTER as DELIVERIES_ROUTER
 from backend.notifications.urls import ROUTER as NOTIFICATIONS_ROUTER
 from backend.preorders.urls import ROUTER as PREORDERS_ROUTER
 from backend.products.urls import ROUTER as PRODUCTS_ROUTER
+from backend.reports.urls import ROUTER as REPORTS_ROUTER
 from backend.settings import DEV, ENV_TYPE, STATIC_ROOT, STATIC_URL
 from backend.users.urls import ROUTER as USERS_ROUTER
 from backend.users.urls import URLS as USERS_URLS
@@ -28,6 +29,7 @@ urlpatterns += [
     url(r"^", include(NOTIFICATIONS_ROUTER.urls)),
     url(r"^", include(PREORDERS_ROUTER.urls)),
     url(r"^", include(PRODUCTS_ROUTER.urls)),
+    url(r"^", include(REPORTS_ROUTER.urls)),
     url(r"^", include(USERS_ROUTER.urls)),
 ]
 

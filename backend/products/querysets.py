@@ -1,15 +1,12 @@
 import calendar
 
-from django.utils import timezone
-from django.db.models import QuerySet, Q, F, Sum, OuterRef, Prefetch, Count
-from django.db.models.expressions import Case, When
-from django.db.models.fields import CharField, DecimalField, IntegerField
-from django.db.models.expressions import Case, Subquery, When
-from django.db.models.functions import Coalesce
-from backend.products import models as products_models
-from backend.branches import models as branches_models
-
 from backend.branches import globals as branches_globals
+from backend.deliveries import globals as deliveries_globals
+from django.db.models import Count, F, Q, QuerySet, Sum
+from django.db.models.expressions import Case, Value, When
+from django.db.models.fields import DecimalField, IntegerField
+from django.db.models.functions import Coalesce
+from django.utils import timezone
 
 
 class ProductQuerySet(QuerySet):
@@ -68,4 +65,66 @@ class ProductQuerySet(QuerySet):
                 )
             )
             .filter(product_status=product_status_val)
+        )
+
+    def by_purchases(self, branch_id: int, date_range: str):
+        branch_id_value = -1 if branch_id is None else branch_id
+        start_date = timezone.now().replace(hour=0, minute=0, second=0)
+        end_date = timezone.now().replace(hour=23, minute=59, second=59)
+
+        if date_range == "daily":
+            start_date = timezone.now().replace(hour=0, minute=0, second=0)
+            end_date = timezone.now().replace(hour=23, minute=59, second=59)
+
+        elif date_range == "monthly":
+            last_day = calendar.monthrange(
+                timezone.now().today().year, timezone.now().today().month
+            )[1]
+            start_date = timezone.now().replace(day=1, hour=0, minute=0, second=0)
+            end_date = timezone.now().replace(
+                day=last_day, hour=23, minute=59, second=59
+            )
+
+        else:
+            start_date, end_date = date_range.split(",")
+            start_date = timezone.datetime.strptime(start_date, "%m/%d/%y").replace(
+                hour=0, minute=0, second=0
+            )
+            end_date = timezone.datetime.strptime(end_date, "%m/%d/%y").replace(
+                hour=23, minute=59, second=59
+            )
+
+        return self.annotate(branch_id_value=Value(branch_id_value)).annotate(
+            total_quantity=Coalesce(
+                Sum(
+                    Case(
+                        When(
+                            Q(
+                                product_prices__branch_products__delivery_products__delivery__datetime_created__gte=start_date
+                            )
+                            & Q(
+                                product_prices__branch_products__delivery_products__delivery__datetime_created__lte=end_date
+                            )
+                            & Q(
+                                product_prices__branch_products__delivery_products__delivery__status__icontains=deliveries_globals.DELIVERY_STATUSES[
+                                    "DELIVERED"
+                                ]
+                            )
+                            & (
+                                Q(branch_id_value=-1)
+                                | Q(
+                                    product_prices__branch_products__branch_id=branch_id_value
+                                )
+                            ),
+                            then=F(
+                                "product_prices__branch_products__delivery_products__quantity"
+                            ),
+                        ),
+                        default=0.0,
+                        output_field=DecimalField(),
+                    ),
+                ),
+                0,
+                output_field=DecimalField(),
+            )
         )

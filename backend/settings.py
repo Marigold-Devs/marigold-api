@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "backend.notifications",
     "backend.preorders",
     "backend.products",
+    "backend.reports",
     "backend.users",
     "backend.web_requests",
 ]

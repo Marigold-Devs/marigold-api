@@ -84,6 +84,7 @@ class DeliveryViewSet(
                 deliveries_models.DeliveryProduct(
                     delivery=delivery,
                     branch_product=delivery_product["branch_product"],
+                    price=delivery_product["price"],
                     quantity=delivery_product["quantity"],
                 )
             )

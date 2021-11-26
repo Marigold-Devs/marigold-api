@@ -37,6 +37,7 @@ class DeliveryCreateRequestSerializer(deliveries_serializers.base.DeliverySerial
             ref_name = "DeliveryCreateRequestSerializer-DeliveryProductCreateSerializer"
             fields = [
                 "branch_product_id",
+                "price",
                 "quantity",
             ]
 
