@@ -13,8 +13,11 @@ from backend.generic.serializers import base as generic_base
 class PreorderResponseSerializer(preorders_serializers.base.PreordersSerializer):
     class PreorderProductResponseSerializer(generic_base.DynamicFieldsModelSerializer):
         branch_product = serializers.SerializerMethodField()
+
         fulfilled_quantity = serializers.SerializerMethodField()
+
         product_name = serializers.SerializerMethodField()
+
         unit_type_id = serializers.SerializerMethodField()
 
         def get_product_name(self, preorder_product):

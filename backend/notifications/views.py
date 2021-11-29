@@ -1,8 +1,10 @@
+from backend.generic.swagger import INT_RESPONSE
 from backend.generic.views import BaseViewSet
 from backend.notifications import models as notifications_models
 from backend.notifications import serializers as notifications_serializers
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 
@@ -46,3 +48,15 @@ class NotificationsViewSet(
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    @swagger_auto_schema(
+        responses={200: INT_RESPONSE},
+    )
+    @action(detail=False, methods=["GET"])
+    def count(self, request):
+        """Count Notifications
+
+        Gets the number of Notifications.
+        """
+
+        return Response(notifications_models.Notification.objects.all().count())
