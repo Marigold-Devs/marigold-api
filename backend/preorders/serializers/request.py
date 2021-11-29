@@ -67,17 +67,14 @@ class PreorderUpdateRequestSerializer(preorders_serializers.base.PreordersSerial
 class PreorderTransactionCreateRequestSerializer(
     preorders_serializers.base.PreorderTransactionSerializer
 ):
-    class PreorderTransactionProductCreateSerializer(
-        generic_base.DynamicFieldsModelSerializer
-    ):
-        preorder_product_id = serializers.PrimaryKeyRelatedField(
-            many=False,
-            queryset=preorders_models.PreorderProduct.objects,
-            source="preorder_product",
-        )
+    preorder_id = serializers.IntegerField()
+
+    class PreorderTransactionProductCreateSerializer(serializers.Serializer):
+        preorder_product_id = serializers.IntegerField()
+
+        quantity = serializers.IntegerField()
 
         class Meta:
-            model = preorders_models.PreorderTransactionProduct
             ref_name = "PreorderTransactionCreateRequestSerializer-PreorderTransactionProductCreateSerializer"
             fields = [
                 "preorder_product_id",
@@ -85,7 +82,7 @@ class PreorderTransactionCreateRequestSerializer(
             ]
 
     preorder_transaction_products = PreorderTransactionProductCreateSerializer(
-        many=True,
+        many=True
     )
 
     class Meta:

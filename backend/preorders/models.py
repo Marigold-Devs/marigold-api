@@ -36,6 +36,8 @@ class Preorder(models.Model):
 
     datetime_created = models.DateTimeField(default=timezone.now)
 
+    datetime_fulfilled = models.DateTimeField(null=True)
+
     class Meta:
         db_table = "preorders"
 
@@ -81,6 +83,8 @@ class PreorderTransaction(models.Model):
         on_delete=models.CASCADE,
         related_name="preorder_transactions",
     )
+
+    datetime_created = models.DateTimeField(default=timezone.now)
 
     class Meta:
         db_table = "preorder_transactions"

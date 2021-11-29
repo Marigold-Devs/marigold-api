@@ -6,6 +6,7 @@ from backend.preorders import serializers as preorders_serializers
 from backend.users import models as users_models
 from backend.users.globals import CLIENT_TYPES
 from django.db import transaction
+from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, status
 from rest_framework.response import Response
@@ -18,7 +19,7 @@ class PreorderViewSet(
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
 ):
-    queryset = preorders_models.Preorder.objects.all()
+    queryset = preorders_models.Preorder.objects.all().order_by("-id")
     serializer_class = preorders_serializers.response.PreorderResponseSerializer
 
     def list(self, request, *args, **kwargs):
@@ -97,6 +98,7 @@ class PreorderViewSet(
         request_body=preorders_serializers.request.PreorderUpdateRequestSerializer(),
         responses={200: preorders_serializers.response.PreorderResponseSerializer()},
     )
+    @transaction.atomic
     def partial_update(self, request, *args, **kwargs):
         """Update Preorder Partially
 
@@ -106,10 +108,15 @@ class PreorderViewSet(
             data=request.data
         )
         serializer.is_valid(raise_exception=True)
+        status = serializer.validated_data["status"]
 
         # Update preorder
         preorder = self.get_object()
-        setattr(preorder, "status", serializer.validated_data["status"])
+        setattr(preorder, "status", status)
+
+        if status == preorders_globals.PREORDER_STATUSES["DELIVERED"]:
+            setattr(preorder, "datetime_fulfilled", timezone.now())
+
         preorder.save()
 
         # Create response
@@ -128,6 +135,7 @@ class PreorderTransactionViewSet(
         request_body=preorders_serializers.request.PreorderTransactionCreateRequestSerializer(),
         responses={204: "No Content", 401: STRING_RESPONSE},
     )
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         """Create a Preorder Transaction
 
@@ -144,8 +152,8 @@ class PreorderTransactionViewSet(
         # Check if preorder is not yet submitted
         preorder = preorders_models.Preorder.objects.filter(
             pk=serializer.validated_data["preorder_id"]
-        )
-        if preorder["status"] != preorders_globals.PREORDER_STATUSES["APPROVED"]:
+        ).first()
+        if preorder.status != preorders_globals.PREORDER_STATUSES["APPROVED"]:
             return Response(
                 "Preorder status is not 'Approved'", status=status.HTTP_400_BAD_REQUEST
             )
@@ -162,7 +170,7 @@ class PreorderTransactionViewSet(
             "preorder_transaction_products"
         ]:
             preorder_transaction_products_data.append(
-                preorders_models.PreorderProduct(
+                preorders_models.PreorderTransactionProduct(
                     preorder_transaction=preorder_transaction,
                     preorder_product_id=preorder_transaction_product[
                         "preorder_product_id"
