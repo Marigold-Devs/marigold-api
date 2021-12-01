@@ -5,13 +5,13 @@ from backend.products import serializers as products_serializers
 from backend.generic.serializers import base as generic_base
 
 
-class BranchesSerializer(generic_base.DynamicFieldsModelSerializer):
+class BranchSerializer(generic_base.DynamicFieldsModelSerializer):
     class Meta:
         model = branches_models.Branch
         fields = ALL_FIELDS
 
 
-class BranchProductsSerializer(generic_base.DynamicFieldsModelSerializer):
+class BranchProductSerializer(generic_base.DynamicFieldsModelSerializer):
     class Meta:
         model = branches_models.BranchProduct
         fields = ALL_FIELDS

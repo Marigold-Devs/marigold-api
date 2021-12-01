@@ -71,6 +71,7 @@ class BranchProductsResponseSerializer(products_serializers.base.ProductSerializ
         return BRANCH_PRODUCT_STATUSES["AVAILABLE"]
 
     product_prices = ProductPriceSerializer(many=True)
+    
     status = serializers.SerializerMethodField()
 
     class Meta:

@@ -134,6 +134,10 @@ class DeliveryViewSet(
         if delivered_by is not None:
             setattr(delivery, "delivered_by", delivered_by)
 
+        datetime_completed = serializer.validated_data["datetime_completed"]
+        if datetime_completed is not None:
+            setattr(delivery, "datetime_completed", datetime_completed)
+
         delivery.save()
 
         # Create response

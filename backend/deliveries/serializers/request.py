@@ -68,5 +68,6 @@ class DeliveryUpdateRequestSerializer(deliveries_serializers.base.DeliverySerial
             "checked_by",
             "pulled_out_by",
             "delivered_by",
+            "datetime_completed",
         ]
         ref_name = "DeliveryUpdateRequestSerializer"

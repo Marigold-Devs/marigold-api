@@ -15,10 +15,10 @@ class BranchViewSet(
     mixins.DestroyModelMixin,
 ):
     queryset = branches_models.Branch.objects.all()
-    serializer_class = branches_serializers.base.BranchesSerializer
+    serializer_class = branches_serializers.base.BranchSerializer
 
     @swagger_auto_schema(
-        responses={200: branches_serializers.base.BranchesSerializer()},
+        responses={200: branches_serializers.base.BranchSerializer()},
     )
     def list(self, request, *args, **kwargs):
         """List Branches
@@ -29,7 +29,7 @@ class BranchViewSet(
 
     @swagger_auto_schema(
         request_body=branches_serializers.request.BranchCreateUpdateRequestSerializer(),
-        responses={201: branches_serializers.base.BranchesSerializer()},
+        responses={201: branches_serializers.base.BranchSerializer()},
     )
     def create(self, request, *args, **kwargs):
         """Create a Branch
@@ -58,13 +58,13 @@ class BranchViewSet(
         branches_models.BranchProduct.objects.bulk_create(branch_products_data)
 
         # Create response
-        response = branches_serializers.base.BranchesSerializer(branch)
+        response = branches_serializers.base.BranchSerializer(branch)
 
         return Response(response.data)
 
     @swagger_auto_schema(
         request_body=branches_serializers.request.BranchCreateUpdateRequestSerializer(),
-        responses={200: branches_serializers.base.BranchesSerializer()},
+        responses={200: branches_serializers.base.BranchSerializer()},
     )
     def partial_update(self, request, *args, **kwargs):
         """Update Branch Partially
@@ -82,7 +82,7 @@ class BranchViewSet(
         branch.save()
 
         # Create response
-        response = branches_serializers.base.BranchesSerializer(branch)
+        response = branches_serializers.base.BranchSerializer(branch)
 
         return Response(response.data)
 

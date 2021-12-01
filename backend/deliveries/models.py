@@ -36,6 +36,8 @@ class Delivery(models.Model):
 
     datetime_delivery = models.DateTimeField()
 
+    datetime_completed = models.DateTimeField(null=True, blank=True)
+
     datetime_created = models.DateTimeField(default=timezone.now)
 
     prepared_by = models.CharField(max_length=50, blank=True)

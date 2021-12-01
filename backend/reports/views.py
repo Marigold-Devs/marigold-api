@@ -34,7 +34,9 @@ class ReportViewSet(BaseViewSet):
 
     @swagger_auto_schema(
         query_serializer=reports_serializers.query.ReportsQuerySerializer(),
-        responses={200: reports_serializers.response.TopProductsResponseSerializer()},
+        responses={
+            200: reports_serializers.response.TopProductsResponseSerializer(many=True)
+        },
     )
     @action(url_path="top-products", detail=False, methods=["GET"])
     def top_products(self, request):
@@ -55,6 +57,11 @@ class ReportViewSet(BaseViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        responses={
+            200: reports_serializers.response.TopCustomersResponseSerializer(many=True)
+        },
+    )
     @action(url_path="top-customers", detail=False, methods=["GET"])
     def top_customers(self, request):
         """Get Top Paying Customers

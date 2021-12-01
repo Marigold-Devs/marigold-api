@@ -71,7 +71,7 @@ class PreorderResponseSerializer(preorders_serializers.base.PreordersSerializer)
 
     preorder_products = PreorderProductResponseSerializer(many=True)
 
-    branch = branches_serializers.base.BranchesSerializer()
+    branch = branches_serializers.base.BranchSerializer()
 
     user = users_serializers.base.UserSerializer()
 
