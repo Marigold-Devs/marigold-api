@@ -22,16 +22,7 @@ class NotificationResponseSerializer(
         return products_serializers.base.UnitTypeSerializer(unit_type).data
 
     def get_status(self, notification):
-        status = None
-        balance = notification.branch_product.balance
-        reorder_point = notification.branch_product.product_price.reorder_point
-
-        if balance == 0:
-            status = branches_globals.BRANCH_PRODUCT_STATUSES["OUT_OF_STOCK"]
-        elif balance <= reorder_point:
-            status = branches_globals.BRANCH_PRODUCT_STATUSES["REORDER"]
-
-        return status
+        return notification.branch_product.get_status()
 
     class Meta:
         model = notifications_serializers.base.NotificationSerializer.Meta.model

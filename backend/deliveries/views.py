@@ -1,3 +1,4 @@
+from backend.branches import models as branches_models
 from backend.deliveries import globals as deliveries_globals
 from backend.deliveries import models as deliveries_models
 from backend.deliveries import serializers as deliveries_serializers
@@ -6,8 +7,9 @@ from backend.generic.views import BaseViewSet
 from backend.users import models as users_models
 from backend.users.globals import CLIENT_TYPES
 from django.db import transaction
+from django.db.models import F
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import mixins, status
+from rest_framework import mixins
 from rest_framework.response import Response
 
 
@@ -18,7 +20,7 @@ class DeliveryViewSet(
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
 ):
-    queryset = deliveries_models.Delivery.objects.all()
+    queryset = deliveries_models.Delivery.objects.all().order_by("-id")
     serializer_class = deliveries_serializers.response.DeliveryResponseSerializer
 
     def list(self, request, *args, **kwargs):
@@ -117,6 +119,18 @@ class DeliveryViewSet(
         status = data.get("status", None)
         if status is not None:
             setattr(delivery, "status", status)
+
+            if status == deliveries_globals.DELIVERY_STATUSES["DELIVERED"]:
+                for delivery_product in delivery.delivery_products.all():
+
+                    branch_product = branches_models.BranchProduct.objects.get(
+                        pk=delivery_product.branch_product_id
+                    )
+                    branch_product.balance -= delivery_product.quantity
+                    branch_product.save()
+
+                    # Check for possible notifications
+                    branch_product.update_notification()
 
         prepared_by = data.get("prepared_by", None)
         if prepared_by is not None:

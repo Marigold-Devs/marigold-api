@@ -1,3 +1,4 @@
+from backend.branches import models as branches_models
 from backend.generic.swagger import STRING_RESPONSE
 from backend.generic.views import BaseViewSet
 from backend.preorders import globals as preorders_globals
@@ -6,6 +7,7 @@ from backend.preorders import serializers as preorders_serializers
 from backend.users import models as users_models
 from backend.users.globals import CLIENT_TYPES
 from django.db import transaction
+from django.db.models import F
 from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, status
@@ -116,6 +118,35 @@ class PreorderViewSet(
 
         if status == preorders_globals.PREORDER_STATUSES["DELIVERED"]:
             setattr(preorder, "datetime_fulfilled", timezone.now())
+
+            # Get preorder transaction products
+            quantity_sum = {}
+
+            for preorder_transaction in preorder.preorder_transactions.all():
+                preorder_transaction_products = (
+                    preorder_transaction.preorder_transaction_products.all()
+                )
+
+                for preorder_transaction_product in preorder_transaction_products:
+                    branch_product_id = (
+                        preorder_transaction_product.preorder_product.branch_product_id
+                    )
+
+                    quantity = int(preorder_transaction_product.quantity)
+                    quantity_sum[branch_product_id] = (
+                        quantity_sum.get(branch_product_id, 0) + quantity
+                    )
+
+            # Add new quantity into branch product's balance
+            for branch_product_id, quantity in quantity_sum.items():
+                branch_product = branches_models.BranchProduct.objects.get(
+                    pk=branch_product_id
+                )
+                branch_product.balance += quantity
+                branch_product.save()
+
+                # Check for possible notifications
+                branch_product.update_notification()
 
         preorder.save()
 
