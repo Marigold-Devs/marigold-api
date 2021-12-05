@@ -44,7 +44,7 @@ class ReportViewSet(BaseViewSet):
 
         Gets the top selling products from a branch and within date range
         """
-        queryset = self.get_queryset().order_by("-total_quantity")
+        queryset = self.get_queryset().order_by("-total_purchase")
 
         page = self.paginate_queryset(queryset)
         if page is not None:

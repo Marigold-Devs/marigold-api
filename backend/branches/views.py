@@ -17,6 +17,14 @@ class BranchViewSet(
     queryset = branches_models.Branch.objects.all()
     serializer_class = branches_serializers.base.BranchSerializer
 
+    def get_permissions(self):
+        action = self.action
+
+        if action == "list":
+            return []
+
+        return super().get_permissions()
+
     @swagger_auto_schema(
         responses={200: branches_serializers.base.BranchSerializer()},
     )

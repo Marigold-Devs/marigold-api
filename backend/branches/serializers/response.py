@@ -8,7 +8,10 @@ from rest_framework import serializers
 class BranchProductsResponseSerializer(products_serializers.base.ProductSerializer):
     class ProductPriceSerializer(products_serializers.base.ProductPriceSerializer):
         balance = serializers.SerializerMethodField()
+
         branch_product_id = serializers.SerializerMethodField()
+
+        unit_type = serializers.SerializerMethodField()
 
         def get_balance(self, product_price):
             branch_id = self.context.get("branch_id")
@@ -28,12 +31,18 @@ class BranchProductsResponseSerializer(products_serializers.base.ProductSerializ
 
             return branch_product.id if branch_product is not None else None
 
+        def get_unit_type(self, product_price):
+            unit_type = product_price.unit_type
+
+            return products_serializers.base.UnitTypeSerializer(unit_type).data
+
         class Meta:
             ref_name = "BranchProductsResponseSerializer-ProductPriceSerializer"
             model = products_serializers.base.ProductPriceSerializer.Meta.model
             fields = products_serializers.base.ProductPriceSerializer.Meta.fields + [
                 "balance",
                 "branch_product_id",
+                "unit_type",
             ]
 
     def get_status(self, product):
@@ -71,7 +80,7 @@ class BranchProductsResponseSerializer(products_serializers.base.ProductSerializ
         return BRANCH_PRODUCT_STATUSES["AVAILABLE"]
 
     product_prices = ProductPriceSerializer(many=True)
-    
+
     status = serializers.SerializerMethodField()
 
     class Meta:

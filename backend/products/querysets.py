@@ -95,7 +95,7 @@ class ProductQuerySet(QuerySet):
             )
 
         return self.annotate(branch_id_value=Value(branch_id_value)).annotate(
-            total_quantity=Coalesce(
+            total_purchase=Coalesce(
                 Sum(
                     Case(
                         When(
@@ -118,6 +118,9 @@ class ProductQuerySet(QuerySet):
                             ),
                             then=F(
                                 "product_prices__branch_products__delivery_products__quantity"
+                            )
+                            * F(
+                                "product_prices__branch_products__delivery_products__price"
                             ),
                         ),
                         default=0.0,
