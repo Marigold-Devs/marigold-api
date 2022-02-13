@@ -23,7 +23,7 @@ class ReportViewSet(BaseViewSet):
         if self.action == "top_products":
             branch_id = serializer.validated_data.get("branch_id", None)
 
-            return products_models.Product.objects.by_purchases(
+            return products_models.Product.objects.by_sales(
                 branch_id=branch_id, date_range=date_range
             )
 
@@ -44,13 +44,25 @@ class ReportViewSet(BaseViewSet):
 
         Gets the top selling products from a branch and within date range
         """
-        queryset = self.get_queryset().order_by("-total_purchase")
+        queryset = self.get_queryset().order_by("-total_sales")
+
+        serializer = reports_serializers.query.ReportsQuerySerializer(
+            data=self.request.query_params
+        )
+        serializer.is_valid(raise_exception=True)
+        branch_id = serializer.validated_data.get("branch_id", None)
+        date_range = serializer.validated_data.get("date_range")
 
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = reports_serializers.response.TopProductsResponseSerializer(
                 page,
                 many=True,
+                context={
+                    "branch_id": branch_id,
+                    "date_range": date_range,
+                    **self.get_serializer_context(),
+                },
             )
             return self.get_paginated_response(serializer.data)
 

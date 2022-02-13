@@ -7,7 +7,6 @@ from backend.preorders import serializers as preorders_serializers
 from backend.users import models as users_models
 from backend.users.globals import CLIENT_TYPES
 from django.db import transaction
-from django.db.models import F
 from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, status

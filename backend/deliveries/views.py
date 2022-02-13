@@ -2,14 +2,13 @@ from backend.branches import models as branches_models
 from backend.deliveries import globals as deliveries_globals
 from backend.deliveries import models as deliveries_models
 from backend.deliveries import serializers as deliveries_serializers
-from backend.generic.swagger import STRING_RESPONSE
 from backend.generic.views import BaseViewSet
 from backend.users import models as users_models
 from backend.users.globals import CLIENT_TYPES
 from django.db import transaction
-from django.db.models import F
+from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import mixins
+from rest_framework import filters, mixins
 from rest_framework.response import Response
 
 
@@ -20,9 +19,33 @@ class DeliveryViewSet(
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
 ):
-    queryset = deliveries_models.Delivery.objects.all().order_by("-id")
+    queryset = deliveries_models.Delivery.objects
     serializer_class = deliveries_serializers.response.DeliveryResponseSerializer
 
+    # TODO: Apply this way of ordering queryset results: Preorder, Transactions
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ["id"]
+    ordering = ["-id"]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        request = self.request
+
+        serializer = deliveries_serializers.query.DeliveryQuerySerializer(
+            data=request.query_params
+        )
+        serializer.is_valid(raise_exception=True)
+
+        payment_status = serializer.validated_data.get("payment_status", None)
+        if payment_status is not None:
+            queryset = queryset.with_payment_status(payment_status)
+
+        return queryset.all()
+
+    @swagger_auto_schema(
+        query_serializer=deliveries_serializers.query.DeliveryQuerySerializer,
+        responses={200: deliveries_serializers.response.DeliveryResponseSerializer},
+    )
     def list(self, request, *args, **kwargs):
         """List Deliveries
 
@@ -121,6 +144,8 @@ class DeliveryViewSet(
             setattr(delivery, "status", status)
 
             if status == deliveries_globals.DELIVERY_STATUSES["DELIVERED"]:
+                setattr(delivery, "datetime_completed", timezone.now())
+
                 for delivery_product in delivery.delivery_products.all():
 
                     branch_product = branches_models.BranchProduct.objects.get(
@@ -131,6 +156,10 @@ class DeliveryViewSet(
 
                     # Check for possible notifications
                     branch_product.update_notification()
+
+        payment_status = data.get("payment_status", None)
+        if payment_status is not None:
+            setattr(delivery, "payment_status", payment_status)
 
         prepared_by = data.get("prepared_by", None)
         if prepared_by is not None:
@@ -147,10 +176,6 @@ class DeliveryViewSet(
         delivered_by = data.get("delivered_by", None)
         if delivered_by is not None:
             setattr(delivery, "delivered_by", delivered_by)
-
-        datetime_completed = serializer.validated_data["datetime_completed"]
-        if datetime_completed is not None:
-            setattr(delivery, "datetime_completed", datetime_completed)
 
         delivery.save()
 

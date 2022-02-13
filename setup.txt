@@ -1,0 +1,7 @@
+POETRY 
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
+
+DJANGO
+- poetry install
+- python manage.py migrate
+- python manage.py createsuperuser --username admin

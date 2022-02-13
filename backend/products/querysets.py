@@ -67,7 +67,7 @@ class ProductQuerySet(QuerySet):
             .filter(product_status=product_status_val)
         )
 
-    def by_purchases(self, branch_id: int, date_range: str):
+    def by_sales(self, branch_id: int, date_range: str):
         branch_id_value = -1 if branch_id is None else branch_id
         start_date = timezone.now().replace(hour=0, minute=0, second=0)
         end_date = timezone.now().replace(hour=23, minute=59, second=59)
@@ -95,7 +95,7 @@ class ProductQuerySet(QuerySet):
             )
 
         return self.annotate(branch_id_value=Value(branch_id_value)).annotate(
-            total_purchase=Coalesce(
+            total_sales=Coalesce(
                 Sum(
                     Case(
                         When(
@@ -122,6 +122,125 @@ class ProductQuerySet(QuerySet):
                             * F(
                                 "product_prices__branch_products__delivery_products__price"
                             ),
+                        ),
+                        default=0.0,
+                        output_field=DecimalField(),
+                    ),
+                ),
+                0,
+                output_field=DecimalField(),
+            )
+        )
+
+
+class ProductPriceQuerySet(QuerySet):
+    def with_sales(self, branch_id: int, date_range: str):
+        branch_id_value = -1 if branch_id is None else branch_id
+        start_date = timezone.now().replace(hour=0, minute=0, second=0)
+        end_date = timezone.now().replace(hour=23, minute=59, second=59)
+
+        if date_range == "daily":
+            start_date = timezone.now().replace(hour=0, minute=0, second=0)
+            end_date = timezone.now().replace(hour=23, minute=59, second=59)
+
+        elif date_range == "monthly":
+            last_day = calendar.monthrange(
+                timezone.now().today().year, timezone.now().today().month
+            )[1]
+            start_date = timezone.now().replace(day=1, hour=0, minute=0, second=0)
+            end_date = timezone.now().replace(
+                day=last_day, hour=23, minute=59, second=59
+            )
+
+        else:
+            start_date, end_date = date_range.split(",")
+            start_date = timezone.datetime.strptime(start_date, "%m/%d/%y").replace(
+                hour=0, minute=0, second=0
+            )
+            end_date = timezone.datetime.strptime(end_date, "%m/%d/%y").replace(
+                hour=23, minute=59, second=59
+            )
+
+        return self.annotate(branch_id_value=Value(branch_id_value)).annotate(
+            total_sales=Coalesce(
+                Sum(
+                    Case(
+                        When(
+                            Q(
+                                branch_products__delivery_products__delivery__datetime_created__gte=start_date
+                            )
+                            & Q(
+                                branch_products__delivery_products__delivery__datetime_created__lte=end_date
+                            )
+                            & Q(
+                                branch_products__delivery_products__delivery__status__icontains=deliveries_globals.DELIVERY_STATUSES[
+                                    "DELIVERED"
+                                ]
+                            )
+                            & (
+                                Q(branch_id_value=-1)
+                                | Q(branch_products__branch_id=branch_id_value)
+                            ),
+                            then=F("branch_products__delivery_products__quantity")
+                            * F("branch_products__delivery_products__price"),
+                        ),
+                        default=0.0,
+                        output_field=DecimalField(),
+                    ),
+                ),
+                0,
+                output_field=DecimalField(),
+            )
+        )
+
+    def with_quantity(self, branch_id: int, date_range: str):
+        branch_id_value = -1 if branch_id is None else branch_id
+        start_date = timezone.now().replace(hour=0, minute=0, second=0)
+        end_date = timezone.now().replace(hour=23, minute=59, second=59)
+
+        if date_range == "daily":
+            start_date = timezone.now().replace(hour=0, minute=0, second=0)
+            end_date = timezone.now().replace(hour=23, minute=59, second=59)
+
+        elif date_range == "monthly":
+            last_day = calendar.monthrange(
+                timezone.now().today().year, timezone.now().today().month
+            )[1]
+            start_date = timezone.now().replace(day=1, hour=0, minute=0, second=0)
+            end_date = timezone.now().replace(
+                day=last_day, hour=23, minute=59, second=59
+            )
+
+        else:
+            start_date, end_date = date_range.split(",")
+            start_date = timezone.datetime.strptime(start_date, "%m/%d/%y").replace(
+                hour=0, minute=0, second=0
+            )
+            end_date = timezone.datetime.strptime(end_date, "%m/%d/%y").replace(
+                hour=23, minute=59, second=59
+            )
+
+        return self.annotate(branch_id_value=Value(branch_id_value)).annotate(
+            total_quantity=Coalesce(
+                Sum(
+                    Case(
+                        When(
+                            Q(
+                                branch_products__delivery_products__delivery__datetime_created__gte=start_date
+                            )
+                            & Q(
+                                branch_products__delivery_products__delivery__datetime_created__lte=end_date
+                            )
+                            & Q(
+                                branch_products__delivery_products__delivery__status__icontains=deliveries_globals.DELIVERY_STATUSES[
+                                    "DELIVERED"
+                                ]
+                            )
+                            & (
+                                Q(branch_id_value=-1)
+                                | Q(branch_products__branch_id=branch_id_value)
+                            ),
+                            then=F("branch_products__delivery_products__quantity"),
                         ),
                         default=0.0,
                         output_field=DecimalField(),

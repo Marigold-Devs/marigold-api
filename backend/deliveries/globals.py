@@ -9,3 +9,8 @@ DELIVERY_TYPES = {
     "DELIVERY": "delivery",
     "PICKUP": "pickup",
 }
+
+PAYMENT_STATUSES = {
+    "UNPAID": "unpaid",
+    "PAID": "paid",
+}

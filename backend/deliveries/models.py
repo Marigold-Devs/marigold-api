@@ -3,6 +3,7 @@ from backend.deliveries import choices as deliveries_choices
 from backend.users import models as user_models
 from django.db import models
 from django.utils import timezone
+from backend.deliveries.querysets import DeliveryQuerySet
 
 
 class Delivery(models.Model):
@@ -34,6 +35,13 @@ class Delivery(models.Model):
         choices=deliveries_choices.DELIVERY_STATUSES_CHOICES,
     )
 
+    payment_status = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        choices=deliveries_choices.PAYMENT_STATUSES_CHOICES,
+    )
+
     datetime_delivery = models.DateTimeField()
 
     datetime_completed = models.DateTimeField(null=True, blank=True)
@@ -47,6 +55,8 @@ class Delivery(models.Model):
     pulled_out_by = models.CharField(max_length=50, blank=True)
 
     delivered_by = models.CharField(max_length=50, blank=True)
+
+    objects = DeliveryQuerySet.as_manager()
 
     class Meta:
         db_table = "deliveries"

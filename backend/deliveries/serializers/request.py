@@ -64,10 +64,10 @@ class DeliveryUpdateRequestSerializer(deliveries_serializers.base.DeliverySerial
         model = deliveries_serializers.base.DeliverySerializer.Meta.model
         fields = [
             "status",
+            "payment_status",
             "prepared_by",
             "checked_by",
             "pulled_out_by",
             "delivered_by",
-            "datetime_completed",
         ]
         ref_name = "DeliveryUpdateRequestSerializer"

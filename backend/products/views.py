@@ -116,6 +116,7 @@ class ProductViewSet(
 
         # Update product prices
         product_price_ids = []
+        new_product_price_ids = []
         for product_price in serializer.validated_data["product_prices"]:
             item = None
             if "id" in product_price:
@@ -129,8 +130,24 @@ class ProductViewSet(
                 item = products_models.ProductPrice.objects.create(
                     product_id=product.id, **product_price
                 )
+                new_product_price_ids.append(item.id)
 
             product_price_ids.append(item.id)
+
+        # Create branch products
+        branches = branches_models.Branch.objects.all()
+
+        if len(branches) > 0 and len(new_product_price_ids) > 0:
+            branch_products_data = []
+            for branch in branches:
+                for product_price_id in new_product_price_ids:
+                    branch_products_data.append(
+                        branches_models.BranchProduct(
+                            branch=branch, product_price_id=product_price_id
+                        )
+                    )
+
+            branches_models.BranchProduct.objects.bulk_create(branch_products_data)
 
         # Create response
         response = products_serializers.response.ProductResponseSerializer(
