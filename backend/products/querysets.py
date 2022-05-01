@@ -13,6 +13,9 @@ class ProductQuerySet(QuerySet):
     def with_name(self, name: str):
         return self.filter(name__icontains=name)
 
+    def with_ids(self, ids: list):
+        return self.filter(id__in=ids)
+
     def with_product_status(self, branch_id: int, product_status: str):
         product_status_val = None
 

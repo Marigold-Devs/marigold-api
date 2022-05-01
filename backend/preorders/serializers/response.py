@@ -1,13 +1,11 @@
-from django.db.models.aggregates import Sum
-from backend.preorders import serializers as preorders_serializers
-from backend.preorders import models as preorders_models
-from backend.branches import models as branches_models
-from backend.products import models as products_models
-from backend.users import serializers as users_serializers
 from backend.branches import serializers as branches_serializers
-from backend.branches import serializers as branches_serializers
-from rest_framework import serializers
 from backend.generic.serializers import base as generic_base
+from backend.preorders import models as preorders_models
+from backend.preorders import serializers as preorders_serializers
+from backend.products import serializers as products_serializers
+from backend.users import serializers as users_serializers
+from django.db.models.aggregates import Sum
+from rest_framework import serializers
 
 
 class PreorderResponseSerializer(preorders_serializers.base.PreordersSerializer):
@@ -16,28 +14,21 @@ class PreorderResponseSerializer(preorders_serializers.base.PreordersSerializer)
 
         fulfilled_quantity = serializers.SerializerMethodField()
 
-        product_name = serializers.SerializerMethodField()
+        product = serializers.SerializerMethodField()
 
         unit_type_id = serializers.SerializerMethodField()
 
-        def get_product_name(self, preorder_product):
-            product = products_models.Product.objects.filter(
-                product_prices__branch_products__preorder_products__id=preorder_product.id
-            ).first()
-
-            return product.name
+        def get_product(self, preorder_product):
+            product = preorder_product.branch_product.product_price.product
+            return products_serializers.base.ProductSerializer(product).data
 
         def get_unit_type_id(self, preorder_product):
-            product_price = products_models.ProductPrice.objects.filter(
-                branch_products__preorder_products__id=preorder_product.id
-            ).first()
+            product_price = preorder_product.branch_product.product_price
 
             return product_price.unit_type_id
 
         def get_branch_product(self, preorder_product):
-            branch_product = branches_models.BranchProduct.objects.filter(
-                pk=preorder_product.branch_product_id
-            ).first()
+            branch_product = preorder_product.branch_product
 
             return branches_serializers.base.BranchProductProductSerializer(
                 branch_product

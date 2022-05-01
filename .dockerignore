@@ -1,0 +1,17 @@
+.dockerignore
+Dockerfile
+.git
+.gitignore
+.gitmodules
+.vscode
+
+build
+/env
+/locustfiles
+/logs
+/media
+/static
+
+seed.json
+demo-seed.json
+ONBOARDING.pdf

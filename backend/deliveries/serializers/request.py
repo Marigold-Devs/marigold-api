@@ -24,6 +24,7 @@ class DeliveryCreateRequestSerializer(deliveries_serializers.base.DeliverySerial
             max_length=50,
             required=False,
         )
+        is_bakery = serializers.BooleanField()
 
     class DeliveryProductCreateSerializer(generic_base.DynamicFieldsModelSerializer):
         branch_product_id = serializers.PrimaryKeyRelatedField(

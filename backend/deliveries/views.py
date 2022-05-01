@@ -89,6 +89,7 @@ class DeliveryViewSet(
                 "landline": customer.get("landline", None),
                 "phone": customer.get("phone", None),
                 "type": CLIENT_TYPES["CUSTOMER"],
+                "is_bakery": customer.get("is_bakery", False),
             },
         )
 

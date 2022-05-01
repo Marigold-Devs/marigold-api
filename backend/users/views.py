@@ -14,6 +14,7 @@ class UserViewSet(
 ):
     queryset = users_models.User.objects.has_no_admin()
     serializer_class = users_serializers.base.UserSerializer
+    permission_classes = []
 
     @swagger_auto_schema(
         request_body=users_serializers.request.UserCreateRequestSerializer(),
@@ -28,16 +29,9 @@ class UserViewSet(
             data=request.data
         )
         serializer.is_valid(raise_exception=True)
-
-        id = serializer.validated_data["id"]
-        user = None
-        try:
-            user = users_models.User.objects.get(id=id)
-            for (key, value) in serializer.validated_data.items():
-                setattr(user, key, value)
-            user.save()
-        except:
-            user = users_models.User.objects.create(**serializer.validated_data)
+        user = users_models.User.objects.create(**serializer.validated_data)
+        user.set_password(serializer.validated_data["password"])
+        user.save()
 
         return Response(users_serializers.base.UserSerializer(user).data)
 

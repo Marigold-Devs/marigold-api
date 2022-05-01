@@ -1,8 +1,10 @@
-from backend.generic.serializers import base as generic_base
-from backend.preorders import models as preorders_models
+from pkg_resources import require
 from backend.branches import models as branches_models
-from backend.users import models as users_models
+from backend.generic.serializers import base as generic_base
+from backend.preorders import choices as preorders_choices
+from backend.preorders import models as preorders_models
 from backend.preorders import serializers as preorders_serializers
+from backend.users import models as users_models
 from rest_framework import serializers
 
 
@@ -35,10 +37,7 @@ class PreorderCreateRequestSerializer(preorders_serializers.base.PreordersSerial
         class Meta:
             model = preorders_models.PreorderProduct
             ref_name = "PreorderCreateRequestSerializer-PreorderProductCreateSerializer"
-            fields = [
-                "branch_product_id",
-                "quantity",
-            ]
+            fields = ["branch_product_id", "quantity", "remarks"]
 
     supplier = PreorderSupplierCreateSerializer(required=False)
 
@@ -51,6 +50,7 @@ class PreorderCreateRequestSerializer(preorders_serializers.base.PreordersSerial
         fields = [
             "branch_id",
             "delivery_type",
+            "description",
             "supplier",
             "preorder_products",
         ]
@@ -58,9 +58,28 @@ class PreorderCreateRequestSerializer(preorders_serializers.base.PreordersSerial
 
 
 class PreorderUpdateRequestSerializer(preorders_serializers.base.PreordersSerializer):
+    class PreorderProductUpdateSerializer(generic_base.DynamicFieldsModelSerializer):
+        branch_product_id = serializers.PrimaryKeyRelatedField(
+            many=False,
+            queryset=branches_models.BranchProduct.objects,
+            source="branch_product",
+        )
+
+        class Meta:
+            model = preorders_models.PreorderProduct
+            ref_name = "PreorderUpdateRequestSerializer-PreorderProductCreateSerializer"
+            fields = ["branch_product_id", "quantity", "remarks"]
+
+    status = serializers.ChoiceField(
+        choices=preorders_choices.PREORDER_STATUSES_CHOICES,
+        required=False,
+    )
+
+    preorder_products = PreorderProductUpdateSerializer(many=True, required=False)
+
     class Meta:
         model = preorders_serializers.base.PreordersSerializer.Meta.model
-        fields = ["status"]
+        fields = ["description", "status", "preorder_products"]
         ref_name = "PreorderUpdateRequestSerializer"
 
 

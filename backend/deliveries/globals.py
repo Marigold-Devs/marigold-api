@@ -8,6 +8,7 @@ DELIVERY_TYPES = {
     "MARKET": "market",
     "DELIVERY": "delivery",
     "PICKUP": "pickup",
+    "SPECIAL": "special",
 }
 
 PAYMENT_STATUSES = {

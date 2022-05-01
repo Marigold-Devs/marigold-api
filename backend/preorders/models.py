@@ -1,5 +1,6 @@
 from backend.branches import models as branch_models
 from backend.preorders import choices as preorders_choices
+from backend.preorders.querysets import PreorderQuerySet
 from backend.users import models as user_models
 from django.db import models
 from django.utils import timezone
@@ -34,9 +35,13 @@ class Preorder(models.Model):
         choices=preorders_choices.PREORDER_STATUSES_CHOICES,
     )
 
+    description = models.CharField(max_length=250, null=True, blank=True)
+
     datetime_created = models.DateTimeField(default=timezone.now)
 
     datetime_fulfilled = models.DateTimeField(null=True)
+
+    objects = PreorderQuerySet.as_manager()
 
     class Meta:
         db_table = "preorders"
@@ -59,6 +64,8 @@ class PreorderProduct(models.Model):
     )
 
     quantity = models.DecimalField(default=0, max_digits=10, decimal_places=3)
+
+    remarks = models.CharField(max_length=250, null=True, blank=True)
 
     class Meta:
         db_table = "preorder_products"

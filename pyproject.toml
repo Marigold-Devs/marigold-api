@@ -2,10 +2,10 @@
 name = "marigold-api"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]
+authors = [""]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.8, <3.9"
 Django = "^3.2.9"
 djangorestframework = "^3.12.4"
 drf-yasg = "^1.20.0"

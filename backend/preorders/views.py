@@ -9,7 +9,7 @@ from backend.users.globals import CLIENT_TYPES
 from django.db import transaction
 from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import mixins, status
+from rest_framework import filters, mixins, status
 from rest_framework.response import Response
 
 
@@ -22,7 +22,42 @@ class PreorderViewSet(
 ):
     queryset = preorders_models.Preorder.objects.all().order_by("-id")
     serializer_class = preorders_serializers.response.PreorderResponseSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    ordering_fields = ["id"]
+    ordering = ["-id"]
+    search_fields = [
+        "id",
+        "supplier__name",
+    ]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        request = self.request
+
+        serializer = preorders_serializers.query.PreordersQuerySerializer(
+            data=request.query_params
+        )
+        serializer.is_valid(raise_exception=True)
+
+        date_created = serializer.validated_data.get("date_created", None)
+        if date_created is not None:
+            print(date_created)
+            queryset = queryset.with_date_created(date_created)
+
+        date_fulfilled = serializer.validated_data.get("date_fulfilled", None)
+        if date_fulfilled is not None:
+            queryset = queryset.with_date_fulfilled(date_fulfilled)
+
+        status = serializer.validated_data.get("status", None)
+        if status is not None:
+            queryset = queryset.with_status(status)
+
+        return queryset.all()
+
+    @swagger_auto_schema(
+        query_serializer=preorders_serializers.query.PreordersQuerySerializer,
+        responses={200: preorders_serializers.response.PreorderResponseSerializer},
+    )
     def list(self, request, *args, **kwargs):
         """List Preorders
 
@@ -76,6 +111,7 @@ class PreorderViewSet(
             supplier=client,
             delivery_type=serializer.validated_data["delivery_type"],
             status=preorders_globals.PREORDER_STATUSES["PENDING"],
+            description=serializer.validated_data.get("description", None),
         )
 
         # Create preorder products
@@ -86,6 +122,7 @@ class PreorderViewSet(
                     preorder=preorder,
                     branch_product=preorder_product["branch_product"],
                     quantity=preorder_product["quantity"],
+                    remarks=preorder_product.get("remarks", None),
                 )
             )
         preorders_models.PreorderProduct.objects.bulk_create(preorder_products_data)
@@ -109,43 +146,66 @@ class PreorderViewSet(
             data=request.data
         )
         serializer.is_valid(raise_exception=True)
-        status = serializer.validated_data["status"]
 
-        # Update preorder
         preorder = self.get_object()
-        setattr(preorder, "status", status)
 
-        if status == preorders_globals.PREORDER_STATUSES["DELIVERED"]:
-            setattr(preorder, "datetime_fulfilled", timezone.now())
+        status = serializer.validated_data.get("status")
+        if status:
+            setattr(preorder, "status", status)
 
-            # Get preorder transaction products
-            quantity_sum = {}
+            if status == preorders_globals.PREORDER_STATUSES["DELIVERED"]:
+                setattr(preorder, "datetime_fulfilled", timezone.now())
 
-            for preorder_transaction in preorder.preorder_transactions.all():
-                preorder_transaction_products = (
-                    preorder_transaction.preorder_transaction_products.all()
-                )
+                # Get preorder transaction products
+                quantity_sum = {}
 
-                for preorder_transaction_product in preorder_transaction_products:
-                    branch_product_id = (
-                        preorder_transaction_product.preorder_product.branch_product_id
+                for preorder_transaction in preorder.preorder_transactions.all():
+                    preorder_transaction_products = (
+                        preorder_transaction.preorder_transaction_products.all()
                     )
 
-                    quantity = int(preorder_transaction_product.quantity)
-                    quantity_sum[branch_product_id] = (
-                        quantity_sum.get(branch_product_id, 0) + quantity
+                    for preorder_transaction_product in preorder_transaction_products:
+                        branch_product_id = (
+                            preorder_transaction_product.preorder_product.branch_product_id
+                        )
+
+                        quantity = int(preorder_transaction_product.quantity)
+                        quantity_sum[branch_product_id] = (
+                            quantity_sum.get(branch_product_id, 0) + quantity
+                        )
+
+                # Add new quantity into branch product's balance
+                for branch_product_id, quantity in quantity_sum.items():
+                    branch_product = branches_models.BranchProduct.objects.get(
+                        pk=branch_product_id
                     )
+                    branch_product.balance += quantity
+                    branch_product.save()
 
-            # Add new quantity into branch product's balance
-            for branch_product_id, quantity in quantity_sum.items():
-                branch_product = branches_models.BranchProduct.objects.get(
-                    pk=branch_product_id
+                    # Check for possible notifications
+                    branch_product.update_notification()
+
+        description = serializer.validated_data.get("description")
+        if description:
+            setattr(preorder, "description", description)
+
+        preorder_products = serializer.validated_data.get("preorder_products")
+        if preorder_products:
+            # Delete all preorder products first
+            preorder.preorder_products.all().delete()
+
+            # Recreate preorder products
+            preorder_products_data = []
+            for preorder_product in serializer.validated_data["preorder_products"]:
+                preorder_products_data.append(
+                    preorders_models.PreorderProduct(
+                        preorder=preorder,
+                        branch_product=preorder_product["branch_product"],
+                        quantity=preorder_product["quantity"],
+                        remarks=preorder_product.get("remarks", None),
+                    )
                 )
-                branch_product.balance += quantity
-                branch_product.save()
-
-                # Check for possible notifications
-                branch_product.update_notification()
+            preorders_models.PreorderProduct.objects.bulk_create(preorder_products_data)
 
         preorder.save()
 

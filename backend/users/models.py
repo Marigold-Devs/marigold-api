@@ -67,6 +67,7 @@ class Client(models.Model):
         max_length=20,
         choices=CLIENT_TYPE_CHOICES,
     )
+    is_bakery = models.BooleanField(default=False)
 
     objects = ClientQuerySet.as_manager()
 

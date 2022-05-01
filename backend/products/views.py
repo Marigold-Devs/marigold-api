@@ -17,10 +17,28 @@ class ProductViewSet(
 ):
     queryset = products_models.Product.objects.all()
     serializer_class = products_serializers.response.ProductResponseSerializer
-
     filter_backends = [filters.SearchFilter]
     search_fields = ["name"]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        request = self.request
+
+        serializer = products_serializers.query.ProductsQuerySerializer(
+            data=request.query_params
+        )
+        serializer.is_valid(raise_exception=True)
+
+        ids = serializer.validated_data.get("ids", None)
+        if ids:
+            queryset = queryset.with_ids(ids)
+
+        return queryset.all()
+
+    @swagger_auto_schema(
+        query_serializer=products_serializers.query.ProductsQuerySerializer,
+        responses={200: products_serializers.response.ProductResponseSerializer},
+    )
     def list(self, request, *args, **kwargs):
         """List Products
 
