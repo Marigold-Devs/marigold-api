@@ -1,9 +1,11 @@
 from backend.branches import models as branches_models
 from backend.branches import serializers as branches_serializers
+from backend.generic.swagger import STRING_RESPONSE
 from backend.generic.views import BaseViewSet
 from backend.products import models as products_models
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import mixins
+from rest_framework import mixins, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 
@@ -150,3 +152,62 @@ class BranchProductViewSet(
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    @swagger_auto_schema(
+        request_body=branches_serializers.request.BranchProductConvertRequestSerializer(),
+        responses={200: STRING_RESPONSE},
+    )
+    @action(detail=False, methods=["POST"])
+    def convert(self, request):
+        """Convert Branch Products
+
+        Converts Branch Product quantity into different Branch Product
+        """
+        serializer = branches_serializers.request.BranchProductConvertRequestSerializer(
+            data=request.data
+        )
+        serializer.is_valid(raise_exception=True)
+
+        from_branch_product_id = serializer.validated_data.get("from_branch_product_id")
+        from_quantity = serializer.validated_data.get("from_quantity")
+        to_branch_product_id = serializer.validated_data.get("to_branch_product_id")
+        to_quantity = serializer.validated_data.get("to_quantity")
+
+        # Check if unique branch product
+        if from_branch_product_id == to_branch_product_id:
+            return Response(
+                "Must be unique branch products.",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        from_branch_product = branches_models.BranchProduct.objects.get(
+            pk=from_branch_product_id
+        )
+        to_branch_product = branches_models.BranchProduct.objects.get(
+            pk=to_branch_product_id
+        )
+
+        # Check if the same product
+        if (
+            from_branch_product.product_price.product.id
+            != to_branch_product.product_price.product.id
+        ):
+            return Response(
+                "Branch products must come from the same product.",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if branch product has sufficient balance
+        if from_branch_product.balance < from_quantity:
+            return Response(
+                "Cannot convert as branch product has insufficient balance.",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Start conversion
+        from_branch_product.balance -= from_quantity
+        from_branch_product.save()
+        to_branch_product.balance += to_quantity
+        to_branch_product.save()
+
+        return Response(None, status.HTTP_204_NO_CONTENT)

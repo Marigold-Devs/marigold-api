@@ -1,0 +1,10 @@
+
+
+216972508314-compute@developer.gserviceaccount.com
+216972508314@cloudbuild.gserviceaccount.com
+
+216972508314@cloudbuild.gserviceaccount.com
+PROJECTNUM@cloudbuild.gserviceaccount.com
+
+
+./cloud_sql_proxy -instances="marigold-345809:asia-southeast1:marigold"=tcp:5432
