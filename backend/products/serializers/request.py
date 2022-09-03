@@ -56,3 +56,12 @@ class ProductUpdateRequestSerializer(products_serializers.base.ProductSerializer
         model = products_serializers.base.ProductSerializer.Meta.model
         fields = "__all__"
         ref_name = "ProductUpdateRequestSerializer"
+
+
+class UnitTypeCreateUpdateRequestSerializer(
+    products_serializers.base.UnitTypeSerializer
+):
+    class Meta:
+        model = products_serializers.base.UnitTypeSerializer.Meta.model
+        fields = "__all__"
+        ref_name = "UnitTypeCreateUpdateRequestSerializer"

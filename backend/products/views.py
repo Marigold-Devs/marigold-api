@@ -190,9 +190,15 @@ class ProductViewSet(
 class UnitTypeViewSet(
     BaseViewSet,
     mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
 ):
     queryset = products_models.UnitType.objects.all()
     serializer_class = products_serializers.base.UnitTypeSerializer
+
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ["name"]
+    ordering = ["name"]
 
     def list(self, request, *args, **kwargs):
         """List Unit Types
@@ -200,3 +206,43 @@ class UnitTypeViewSet(
         Gets a collection of Unit Types.
         """
         return super().list(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        request_body=products_serializers.request.UnitTypeCreateUpdateRequestSerializer(),
+        responses={201: products_serializers.base.UnitTypeSerializer()},
+    )
+    def create(self, request, *args, **kwargs):
+        """Create Unit Type
+
+        Create a new Unit Type.
+        """
+        serializer = products_serializers.request.UnitTypeCreateUpdateRequestSerializer(
+            data=request.data
+        )
+        serializer.is_valid(raise_exception=True)
+
+        unit_type = products_models.UnitType.objects.create(
+            name=serializer.validated_data["name"],
+        )
+
+        response = products_serializers.base.UnitTypeSerializer(unit_type)
+
+        return Response(response.data)
+
+    def partial_update(self, request, *args, **kwargs):
+        """Update Unit Type
+
+        Partially updates a unit type.
+        """
+        serializer = products_serializers.request.UnitTypeCreateUpdateRequestSerializer(
+            data=request.data
+        )
+        serializer.is_valid(raise_exception=True)
+
+        unit_type = self.get_object()
+        setattr(unit_type, "name", serializer.validated_data["name"])
+        unit_type.save()
+
+        response = products_serializers.base.UnitTypeSerializer(unit_type)
+
+        return Response(response.data)
