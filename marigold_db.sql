@@ -24,7 +24,7 @@ CREATE TABLE `auth_group` (
   `name` varchar(150) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `auth_group_permissions`;
 CREATE TABLE `auth_group_permissions` (
@@ -36,7 +36,7 @@ CREATE TABLE `auth_group_permissions` (
   KEY `auth_group_permissio_permission_id_84c5c92e_fk_auth_perm` (`permission_id`),
   CONSTRAINT `auth_group_permissio_permission_id_84c5c92e_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`),
   CONSTRAINT `auth_group_permissions_group_id_b120cbf9_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `auth_permission`;
 CREATE TABLE `auth_permission` (
@@ -47,7 +47,7 @@ CREATE TABLE `auth_permission` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `branch_products`;
 CREATE TABLE `branch_products` (
@@ -60,14 +60,14 @@ CREATE TABLE `branch_products` (
   KEY `branch_products_product_price_id_ba82ccc5_fk_product_prices_id` (`product_price_id`),
   CONSTRAINT `branch_products_branch_id_fab0c63e_fk_branches_id` FOREIGN KEY (`branch_id`) REFERENCES `branches` (`id`),
   CONSTRAINT `branch_products_product_price_id_ba82ccc5_fk_product_prices_id` FOREIGN KEY (`product_price_id`) REFERENCES `product_prices` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `branches`;
 CREATE TABLE `branches` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `clients`;
 CREATE TABLE `clients` (
@@ -79,7 +79,7 @@ CREATE TABLE `clients` (
   `phone` varchar(50) DEFAULT NULL,
   `type` varchar(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `deliveries`;
 CREATE TABLE `deliveries` (
@@ -104,7 +104,7 @@ CREATE TABLE `deliveries` (
   CONSTRAINT `deliveries_branch_id_841079b3_fk_branches_id` FOREIGN KEY (`branch_id`) REFERENCES `branches` (`id`),
   CONSTRAINT `deliveries_customer_id_0979af68_fk_clients_id` FOREIGN KEY (`customer_id`) REFERENCES `clients` (`id`),
   CONSTRAINT `deliveries_user_id_3e30f5c5_fk_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `delivery_products`;
 CREATE TABLE `delivery_products` (
@@ -118,7 +118,7 @@ CREATE TABLE `delivery_products` (
   KEY `delivery_products_delivery_id_ee9c1e7f_fk_deliveries_id` (`delivery_id`),
   CONSTRAINT `delivery_products_branch_product_id_fa9c5d37_fk_branch_pr` FOREIGN KEY (`branch_product_id`) REFERENCES `branch_products` (`id`),
   CONSTRAINT `delivery_products_delivery_id_ee9c1e7f_fk_deliveries_id` FOREIGN KEY (`delivery_id`) REFERENCES `deliveries` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `django_admin_log`;
 CREATE TABLE `django_admin_log` (
@@ -136,7 +136,7 @@ CREATE TABLE `django_admin_log` (
   CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
   CONSTRAINT `django_admin_log_user_id_c564eba6_fk_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `django_admin_log_chk_1` CHECK ((`action_flag` >= 0))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `django_content_type`;
 CREATE TABLE `django_content_type` (
@@ -145,7 +145,7 @@ CREATE TABLE `django_content_type` (
   `model` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `django_migrations`;
 CREATE TABLE `django_migrations` (
@@ -154,7 +154,7 @@ CREATE TABLE `django_migrations` (
   `name` varchar(255) NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `django_session`;
 CREATE TABLE `django_session` (
@@ -163,7 +163,7 @@ CREATE TABLE `django_session` (
   `expire_date` datetime(6) NOT NULL,
   PRIMARY KEY (`session_key`),
   KEY `django_session_expire_date_a5c62663` (`expire_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `notifications`;
 CREATE TABLE `notifications` (
@@ -172,7 +172,7 @@ CREATE TABLE `notifications` (
   PRIMARY KEY (`id`),
   KEY `notifications_branch_product_id_1b45cb50_fk_branch_products_id` (`branch_product_id`),
   CONSTRAINT `notifications_branch_product_id_1b45cb50_fk_branch_products_id` FOREIGN KEY (`branch_product_id`) REFERENCES `branch_products` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `preorder_products`;
 CREATE TABLE `preorder_products` (
@@ -185,7 +185,7 @@ CREATE TABLE `preorder_products` (
   KEY `preorder_products_preorder_id_f7a47c7b_fk_preorders_id` (`preorder_id`),
   CONSTRAINT `preorder_products_branch_product_id_ec96aa9b_fk_branch_pr` FOREIGN KEY (`branch_product_id`) REFERENCES `branch_products` (`id`),
   CONSTRAINT `preorder_products_preorder_id_f7a47c7b_fk_preorders_id` FOREIGN KEY (`preorder_id`) REFERENCES `preorders` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `preorder_transaction_products`;
 CREATE TABLE `preorder_transaction_products` (
@@ -198,7 +198,7 @@ CREATE TABLE `preorder_transaction_products` (
   KEY `preorder_transaction_preorder_transaction_d479aa4a_fk_preorder_` (`preorder_transaction_id`),
   CONSTRAINT `preorder_transaction_preorder_product_id_b7411731_fk_preorder_` FOREIGN KEY (`preorder_product_id`) REFERENCES `preorder_products` (`id`),
   CONSTRAINT `preorder_transaction_preorder_transaction_d479aa4a_fk_preorder_` FOREIGN KEY (`preorder_transaction_id`) REFERENCES `preorder_transactions` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `preorder_transactions`;
 CREATE TABLE `preorder_transactions` (
@@ -211,7 +211,7 @@ CREATE TABLE `preorder_transactions` (
   KEY `preorder_transactions_user_id_c45b4ed2_fk_users_id` (`user_id`),
   CONSTRAINT `preorder_transactions_preorder_id_8e732bf1_fk_preorders_id` FOREIGN KEY (`preorder_id`) REFERENCES `preorders` (`id`),
   CONSTRAINT `preorder_transactions_user_id_c45b4ed2_fk_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `preorders`;
 CREATE TABLE `preorders` (
@@ -230,7 +230,7 @@ CREATE TABLE `preorders` (
   CONSTRAINT `preorders_branch_id_1bffcf0d_fk_branches_id` FOREIGN KEY (`branch_id`) REFERENCES `branches` (`id`),
   CONSTRAINT `preorders_supplier_id_262cfdb7_fk_clients_id` FOREIGN KEY (`supplier_id`) REFERENCES `clients` (`id`),
   CONSTRAINT `preorders_user_id_2ade4dbb_fk_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `product_prices`;
 CREATE TABLE `product_prices` (
@@ -247,7 +247,7 @@ CREATE TABLE `product_prices` (
   KEY `product_prices_unit_type_id_a55b34e9_fk_unit_types_id` (`unit_type_id`),
   CONSTRAINT `product_prices_product_id_46988f16_fk_products_id` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`),
   CONSTRAINT `product_prices_unit_type_id_a55b34e9_fk_unit_types_id` FOREIGN KEY (`unit_type_id`) REFERENCES `unit_types` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `products`;
 CREATE TABLE `products` (
@@ -256,7 +256,7 @@ CREATE TABLE `products` (
   `unit_cost` decimal(10,2) NOT NULL,
   `vat_type` varchar(5) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `transaction_products`;
 CREATE TABLE `transaction_products` (
@@ -270,7 +270,7 @@ CREATE TABLE `transaction_products` (
   KEY `transaction_products_transaction_id_27e15717_fk_transactions_id` (`transaction_id`),
   CONSTRAINT `transaction_products_branch_product_id_0b32f8dd_fk_branch_pr` FOREIGN KEY (`branch_product_id`) REFERENCES `branch_products` (`id`),
   CONSTRAINT `transaction_products_transaction_id_27e15717_fk_transactions_id` FOREIGN KEY (`transaction_id`) REFERENCES `transactions` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `transactions`;
 CREATE TABLE `transactions` (
@@ -284,14 +284,14 @@ CREATE TABLE `transactions` (
   KEY `transactions_cashier_id_1c2e6357_fk_users_id` (`cashier_id`),
   CONSTRAINT `transactions_branch_id_e792b986_fk_branches_id` FOREIGN KEY (`branch_id`) REFERENCES `branches` (`id`),
   CONSTRAINT `transactions_cashier_id_1c2e6357_fk_users_id` FOREIGN KEY (`cashier_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `unit_types`;
 CREATE TABLE `unit_types` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
@@ -306,7 +306,7 @@ CREATE TABLE `users` (
   `user_type` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `users_groups`;
 CREATE TABLE `users_groups` (
@@ -318,7 +318,7 @@ CREATE TABLE `users_groups` (
   KEY `users_groups_group_id_2f3517aa_fk_auth_group_id` (`group_id`),
   CONSTRAINT `users_groups_group_id_2f3517aa_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`),
   CONSTRAINT `users_groups_user_id_f500bee5_fk_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `users_user_permissions`;
 CREATE TABLE `users_user_permissions` (
@@ -330,7 +330,7 @@ CREATE TABLE `users_user_permissions` (
   KEY `users_user_permissio_permission_id_6d08dcd2_fk_auth_perm` (`permission_id`),
   CONSTRAINT `users_user_permissio_permission_id_6d08dcd2_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`),
   CONSTRAINT `users_user_permissions_user_id_92473840_fk_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `web_requests_webrequest`;
 CREATE TABLE `web_requests_webrequest` (
@@ -344,7 +344,7 @@ CREATE TABLE `web_requests_webrequest` (
   `get` longtext,
   `post` longtext,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=127 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=127 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALUES
 (1, 'Can add log entry', 1, 'add_logentry'),

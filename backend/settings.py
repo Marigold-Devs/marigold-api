@@ -91,10 +91,10 @@ WSGI_APPLICATION = "backend.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("DB_NAME", "marigold_db"),
+        "NAME": os.getenv("DB_NAME", "marigold"),
         "USER": os.getenv("DB_USER", "root"),
         "HOST": os.getenv("DB_HOST", "127.0.0.1"),
-        "PASSWORD": os.getenv("DB_PASSWORD", "12345678").rstrip(),
+        "PASSWORD": os.getenv("DB_PASSWORD", "").rstrip(),
         "OPTIONS": {"charset": "utf8mb4"},
     },
 }
